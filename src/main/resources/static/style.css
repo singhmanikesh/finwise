@@ -1,0 +1,24 @@
+body {
+  background-color: #f1f3f6;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+h1 {
+  font-weight: bold;
+}
+
+.tab-section {
+  display: none;
+}
+
+.tab-section.active {
+  display: block;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
