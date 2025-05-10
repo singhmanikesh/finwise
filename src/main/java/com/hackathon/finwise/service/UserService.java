@@ -3,18 +3,20 @@ package com.hackathon.finwise.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hackathon.finwise.model.Investment;
-import com.hackathon.finwise.model.RiskLevel;
-import com.hackathon.finwise.model.StockData;
-import com.hackathon.finwise.model.UserProfile;
+import com.hackathon.finwise.model.*;
 import com.hackathon.finwise.repository.UserProfileRepository;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,12 +27,81 @@ public class UserService {
 
     private final UserProfileRepository userRepo;
 
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    @Value("${marketaux.api.key}")
+    private String marketauxApiKey;
+
+/*    public List<Investment> getFinancialNews() {
+        String url = "https://api.marketaux.com/v1/news/all?categories=business,finance,markets&language=en&api_token=" + marketauxApiKey;
+
+        ResponseEntity<MarketauxResponse> response = restTemplate.getForEntity(url, MarketauxResponse.class);
+
+        if (response.getBody() != null && response.getBody().getData() != null) {
+            return response.getBody().getData().stream()
+                    .map(article -> new Investment(
+                            article.getTitle(),
+                            "Financial News",
+                            article.getDescription(),
+                            0.0
+                    ))
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }*/
+
+    public InvestmentGoalPlan calculateGoalPlan(InvestmentGoalRequest req, String username) {
+        UserProfile user = getUserByUsername(username);
+
+        double monthlyIncome = user.getMonthlyIncome();
+        double monthlySavingsNeeded = req.getTargetAmount() / (req.getYears() * 12);
+        RiskLevel risk = monthlySavingsNeeded < (monthlyIncome * 0.1) ? RiskLevel.LOW :
+                monthlySavingsNeeded < (monthlyIncome * 0.3) ? RiskLevel.MEDIUM : RiskLevel.HIGH;
+
+        List<Investment> suggestions = getInvestmentSuggestionsByRisk(risk);
+
+        return new InvestmentGoalPlan(req.getGoal(), req.getTargetAmount(), req.getYears(), monthlySavingsNeeded, risk, suggestions);
+    }
+
+    public List<Investment> getFinancialNews() {
+    String url = "https://api.marketaux.com/v1/news/all?categories=business,finance,markets&language=en&api_token=" + marketauxApiKey;
+
+    ResponseEntity<MarketauxResponse> response = restTemplate.getForEntity(url, MarketauxResponse.class);
+
+    if (response.getBody() != null && response.getBody().getData() != null) {
+        List<MarketauxArticle> articles = response.getBody().getData();
+
+        // Shuffle the articles to give variety
+        Collections.shuffle(articles);
+
+        // Limit to top 5 (optional)
+        List<MarketauxArticle> limitedArticles = articles.stream()
+                .limit(5)
+                .collect(Collectors.toList());
+
+        return limitedArticles.stream()
+                .map(article -> new Investment(
+                        article.getTitle(),
+                        "Financial News",
+                        article.getDescription(),
+                        4
+                ))
+                .collect(Collectors.toList());
+    }
+    return new ArrayList<>();
+}
+
+
+
+
     public UserProfile createUser(UserProfile user){
         if (user.getLastInvestmentDate() == null) {
             user.setLastInvestmentDate(LocalDate.now());
         }
         return userRepo.save(user);
     }
+
+
 
     public UserProfile getUser(Long id){
         Optional<UserProfile> user = userRepo.findById(id);

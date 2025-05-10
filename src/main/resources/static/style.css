@@ -22,3 +22,22 @@ h1 {
   padding: 1rem;
   margin-bottom: 1rem;
 }
+
+/* Add these styles to your CSS file */
+#goalPlanResult .card {
+    transition: all 0.3s ease;
+}
+
+#goalPlanResult .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+#goalText {
+    min-height: 100px;
+}
+
+/* Risk level badges */
+.bg-success { background-color: #28a745!important; }
+.bg-warning { background-color: #ffc107!important; }
+.bg-danger { background-color: #dc3545!important; }

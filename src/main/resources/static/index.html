@@ -13,10 +13,13 @@
 
     <!-- Tabs -->
     <ul class="nav nav-tabs mb-4" id="tabs">
+
         <li class="nav-item"><a class="nav-link active" href="#" data-section="createUser">👤 Create User</a></li>
         <li class="nav-item"><a class="nav-link" href="#" data-section="profile">🛠️ Profile</a></li>
         <li class="nav-item"><a class="nav-link" href="#" data-section="suggestions">📈 Suggestions</a></li>
         <li class="nav-item"><a class="nav-link" href="#" data-section="dips">📉 Dips</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" data-section="goalPlanner">🎯 Goal Planner</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" data-section="news">📰 News</a></li>
     </ul>
 
     <!-- Pages -->
@@ -87,8 +90,30 @@
         <div id="dipsResult" class="mt-3"></div>
     </div>
 
+    <div id="goalPlanner" class="tab-section d-none">
+        <h3>🎯 Goal Planning Assistant</h3>
+        <div class="mb-3">
+            <input type="text" id="goalUsername" class="form-control mb-2" placeholder="👤 Enter Username">
+            <textarea id="goalText" class="form-control mb-2" rows="3"
+                      placeholder="💡 Describe your financial goal (e.g., I want to save $30,000 in 3 years to buy a car)"></textarea>
+            <button class="btn btn-primary w-100" id="generateGoalBtn">✨ Generate Plan</button>
+        </div>
+        <div id="goalPlanResult" class="mt-3"></div>
+    </div>
+
+    <div id="news" class="tab-section d-none">
+        <h3>Financial News</h3>
+
+        <button class="btn btn-secondary w-100 mb-3" onclick="loadNews()"> 📰 Refresh News </button>
+
+        <div id="newsResult" class="mt-3"></div>
+    </div>
+
+
+
+
 </div>
 
-<script src="app.js"></script>
+<script src="app.js" ></script>
 </body>
 </html>
